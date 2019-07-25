@@ -1,0 +1,7 @@
+# Sample configuration file for NfcProvisioning
+# Place this file in the SD card:
+#   $ adb push nfcprovisioning.txt /sdcard/
+
+android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME=packagename.of.your.deviceowner
+android.app.extra.PROVISIONING_LOCALE=en_GB
+android.app.extra.PROVISIONING_TIME_ZONE=America/New_York
