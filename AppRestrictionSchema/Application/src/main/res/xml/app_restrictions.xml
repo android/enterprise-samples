@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+Copyright 2014 The Android Open Source Project
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<restrictions xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+    Refer to the javadoc of RestrictionsManager for detail of this file.
+    https://developer.android.com/reference/android/content/RestrictionsManager.html
+    -->
+
+    <!-- Boolean restriction -->
+    <restriction
+        android:defaultValue="@bool/default_can_say_hello"
+        android:description="@string/description_can_say_hello"
+        android:key="can_say_hello"
+        android:restrictionType="bool"
+        android:title="@string/title_can_say_hello"/>
+
+    <!-- String restriction -->
+    <restriction
+        android:defaultValue="@string/default_message"
+        android:description="@string/description_message"
+        android:key="message"
+        android:restrictionType="string"
+        android:title="@string/title_message"/>
+
+    <!-- Integer restriction -->
+    <restriction
+        android:defaultValue="@integer/default_number"
+        android:description="@string/description_number"
+        android:key="number"
+        android:restrictionType="integer"
+        android:title="@string/title_number"/>
+
+    <!-- Choice restriction -->
+    <restriction
+        android:defaultValue="@string/default_rank"
+        android:description="@string/description_rank"
+        android:entries="@array/entries_rank"
+        android:entryValues="@array/entry_values_rank"
+        android:key="rank"
+        android:restrictionType="choice"
+        android:title="@string/title_rank"/>
+
+    <!-- Multi-select restriction -->
+    <restriction
+        android:defaultValue="@array/default_approvals"
+        android:description="@string/description_approvals"
+        android:entries="@array/entries_approvals"
+        android:entryValues="@array/entry_values_approvals"
+        android:key="approvals"
+        android:restrictionType="multi-select"
+        android:title="@string/title_approvals"/>
+
+    <!-- Hidden restriction -->
+    <restriction
+        android:defaultValue="@string/default_secret_code"
+        android:description="@string/description_secret_code"
+        android:key="secret_code"
+        android:restrictionType="hidden"
+        android:title="@string/title_secret_code"/>
+
+    <!-- Bundle array restriction -->
+    <restriction
+        android:description="@string/description_items"
+        android:key="items"
+        android:restrictionType="bundle_array"
+        android:title="@string/title_items">
+        <!-- Bundle array must have one bundle restriction -->
+        <restriction
+            android:key="item"
+            android:restrictionType="bundle"
+            android:title="@string/title_item">
+            <restriction
+                android:key="key"
+                android:restrictionType="string"
+                android:title="@string/title_key"/>
+            <restriction
+                android:key="value"
+                android:restrictionType="string"
+                android:title="@string/title_value"/>
+        </restriction>
+    </restriction>
+
+</restrictions>
