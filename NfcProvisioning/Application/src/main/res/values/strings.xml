@@ -16,6 +16,14 @@ limitations under the License.
 -->
 <resources>
 
+    <string name="app_name">NfcProvisioning</string>
+    <string name="intro_message">
+        <![CDATA[
+This sample demonstrates how to provision other devices with a specified device owner using NFC.
+Install the DeviceOwner sample to an unprovisioned device. Fill in the values below, and bump the
+two devices, and tap this side to initiate the provisioning process.
+        ]]>
+    </string>
     <string name="nfc_comment">NFC provisioning sample</string>
 
     <string name="hint_package_name">Package name of device owner</string>
