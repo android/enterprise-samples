@@ -19,8 +19,8 @@ package com.example.android.deviceowner;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_real);
+        setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             DevicePolicyManager manager =
                     (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
