@@ -15,6 +15,13 @@
  limitations under the License.
 -->
 <resources>
+    <string name="app_name">AppRestrictionEnforcer</string>
+    <string name="intro_message">
+        <![CDATA[
+        This sample demonstrates how to set restrictions to other apps as a profile owner.
+        Use the AppRestrictionSchema sample to set restrictions.
+        ]]>
+    </string>
     <string name="setup_profile_message">This app is currently not a profile owner.</string>
     <string name="set_up_profile">Set up profile</string>
     <string name="status_not_installed">AppRestrictionsSchema is not installed.</string>

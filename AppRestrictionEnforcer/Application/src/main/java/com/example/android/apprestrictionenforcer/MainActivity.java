@@ -22,14 +22,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends FragmentActivity implements StatusFragment.StatusUpdatedListener {
+public class MainActivity extends AppCompatActivity implements StatusFragment.StatusUpdatedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_real);
+        setContentView(R.layout.activity_main);
         if (null == savedInstanceState) {
             DevicePolicyManager devicePolicyManager =
                     (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);

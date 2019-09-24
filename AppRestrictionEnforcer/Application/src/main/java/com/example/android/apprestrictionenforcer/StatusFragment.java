@@ -22,8 +22,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,8 +50,8 @@ public class StatusFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        mTextStatus = (TextView) view.findViewById(R.id.status);
-        mButtonUnhide = (Button) view.findViewById(R.id.unhide);
+        mTextStatus = view.findViewById(R.id.status);
+        mButtonUnhide = view.findViewById(R.id.unhide);
         mButtonUnhide.setOnClickListener(this);
     }
 
@@ -138,7 +138,7 @@ public class StatusFragment extends Fragment implements View.OnClickListener {
     }
 
     public interface StatusUpdatedListener {
-        public void onStatusUpdated();
+        void onStatusUpdated();
     }
 
 }
