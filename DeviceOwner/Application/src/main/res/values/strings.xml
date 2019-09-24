@@ -16,6 +16,15 @@
 -->
 <resources>
 
+    <string name="app_name">DeviceOwner</string>
+    <string name="intro_message">
+        <![CDATA[
+This app demonstrates how to use device owner features. Use the NfcProvisioning sample to set up
+this app as the device owner of your test device (This requires wiping out the device and resseting
+it as an unprovisioned device). As a device owner, this app can configure global settings, and
+enforce use of a specific launcher.
+        ]]>
+    </string>
     <string name="set_up_instruction">
         The app is not set up as the device owner of this device. Use NfcProvisioning sample to set
         up this app as the device owner of this device (This requires factory resetting the device).

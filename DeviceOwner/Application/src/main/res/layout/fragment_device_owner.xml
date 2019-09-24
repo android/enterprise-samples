@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
+            android:layout_margin="@dimen/spacing_medium"
             android:text="@string/label_global_settings"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -37,9 +37,9 @@
             android:id="@+id/switch_auto_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
-            android:paddingEnd="@dimen/margin_medium"
-            android:paddingStart="@dimen/margin_medium"
+            android:layout_margin="@dimen/spacing_medium"
+            android:paddingEnd="@dimen/spacing_medium"
+            android:paddingStart="@dimen/spacing_medium"
             android:text="@string/label_auto_time"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -47,20 +47,20 @@
             android:id="@+id/switch_auto_time_zone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
-            android:paddingEnd="@dimen/margin_medium"
-            android:paddingStart="@dimen/margin_medium"
+            android:layout_margin="@dimen/spacing_medium"
+            android:paddingEnd="@dimen/spacing_medium"
+            android:paddingStart="@dimen/spacing_medium"
             android:text="@string/label_auto_time_zone"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="@dimen/margin_medium"/>
+            android:layout_height="@dimen/spacing_medium"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_medium"
+            android:layout_margin="@dimen/spacing_medium"
             android:text="@string/label_launcher"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
@@ -68,14 +68,14 @@
             android:id="@+id/available_launchers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_medium"
-            android:layout_marginTop="@dimen/margin_medium"/>
+            android:layout_marginStart="@dimen/spacing_medium"
+            android:layout_marginTop="@dimen/spacing_medium"/>
 
         <Button
             android:id="@+id/set_preferred_launcher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_medium"
+            android:layout_marginStart="@dimen/spacing_medium"
             android:text="@string/set_as_preferred"/>
 
     </LinearLayout>
