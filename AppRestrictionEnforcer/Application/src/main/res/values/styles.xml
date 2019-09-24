@@ -16,10 +16,19 @@
 
 <resources>
 
-    <style name="Widget.SampleMessage">
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
-        <item name="android:lineSpacingMultiplier">1.2</item>
-        <item name="android:shadowDy">-6.5</item>
+    <!-- Activity themes -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar" />
+
+    <style name="SampleMessage" >
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:lineSpacingMultiplier">1.1</item>
+    </style>
+
+    <style name="SampleMessageTile">
+        <item name="android:background">@drawable/tile</item>
+        <item name="android:shadowColor">#7F000000</item>
+        <item name="android:shadowDy">-3.5</item>
+        <item name="android:shadowRadius">2</item>
     </style>
 
 </resources>

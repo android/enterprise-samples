@@ -16,7 +16,10 @@
 
 <resources>
 
-    <!-- Activity themes -->
-    <style name="Theme.Base" parent="android:Theme.Holo.Light" />
+    <style name="SampleMessage">
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:shadowDy">-6.5</item>
+    </style>
 
 </resources>
