@@ -28,12 +28,12 @@
           android:orientation="vertical">
 
         <FrameLayout
-              style="@style/Widget.SampleMessageTile"
+              style="@style/SampleMessageTile"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
 
             <TextView
-                  style="@style/Widget.SampleMessage"
+                  style="@style/SampleMessage"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:paddingLeft="@dimen/margin_medium"
