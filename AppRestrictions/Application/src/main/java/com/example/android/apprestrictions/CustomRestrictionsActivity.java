@@ -16,13 +16,14 @@
 
 package com.example.android.apprestrictions;
 
-import android.app.Activity;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * This activity demonstrates how an app can integrate its own custom app restriction settings
  * with the restricted profile feature.
- *
+ * <p>
  * This sample app maintains custom app restriction settings in shared preferences.  When
  * the activity is invoked (from Settings > Users), the stored settings are used to initialize
  * the custom configuration on the user interface.  Three sample input types are
@@ -30,15 +31,16 @@ import android.os.Bundle;
  * the corresponding restriction entries are saved, which are retrievable under a restricted
  * profile.
  */
-public class CustomRestrictionsActivity extends Activity {
+public class CustomRestrictionsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().replace(android.R.id.content,
-                    new CustomRestrictionsFragment()).commit();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(android.R.id.content, new CustomRestrictionsFragment())
+                    .commitNow();
         }
     }
 }

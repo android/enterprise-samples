@@ -22,11 +22,11 @@ import android.content.Intent;
 import android.content.RestrictionEntry;
 import android.os.Bundle;
 import android.os.UserManager;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
+import androidx.preference.CheckBoxPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.MultiSelectListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,7 +48,7 @@ import java.util.Set;
  * platform.  The saved restriction entries are retrievable when the app is launched under a
  * restricted profile.
  */
-public class CustomRestrictionsFragment extends PreferenceFragment
+public class CustomRestrictionsFragment extends PreferenceFragmentCompat
         implements Preference.OnPreferenceChangeListener {
 
     // Shared preference key for the boolean restriction.
@@ -73,21 +73,25 @@ public class CustomRestrictionsFragment extends PreferenceFragment
     private RestrictionEntry mMultiEntry;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.custom_prefs);
 
         // This sample app uses shared preferences to maintain app restriction settings.  Your app
         // can use other methods to maintain the settings.
-        mBooleanPref = (CheckBoxPreference) findPreference(KEY_BOOLEAN_PREF);
-        mChoicePref = (ListPreference) findPreference(KEY_CHOICE_PREF);
-        mMultiPref = (MultiSelectListPreference) findPreference(KEY_MULTI_PREF);
+        mBooleanPref = findPreference(KEY_BOOLEAN_PREF);
+        mChoicePref = findPreference(KEY_CHOICE_PREF);
+        mMultiPref = findPreference(KEY_MULTI_PREF);
 
         mBooleanPref.setOnPreferenceChangeListener(this);
         mChoicePref.setOnPreferenceChangeListener(this);
         mMultiPref.setOnPreferenceChangeListener(this);
 
         setRetainInstance(true);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override

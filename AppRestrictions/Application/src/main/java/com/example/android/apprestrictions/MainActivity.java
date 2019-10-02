@@ -16,35 +16,35 @@
 
 package com.example.android.apprestrictions;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.UserManager;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 /**
  * This is the main user interface of the App Restrictions sample app.  It demonstrates the use
  * of the App Restriction feature, which is available on Android 4.3 and above tablet devices
- * with the multiuser feature.
- *
+ * with the multi-user feature.
+ * <p>
  * When launched under the primary User account, you can toggle between standard app restriction
  * types and custom.  When launched under a restricted profile, this activity displays app
  * restriction settings, if available.
- *
+ * <p>
  * Follow these steps to exercise the feature:
  * 1. If this is the primary user, go to Settings > Users.
  * 2. Create a restricted profile, if one doesn't exist already.
  * 3. Open the profile settings, locate the sample app, and tap the app restriction settings
- *    icon. Configure app restrictions for the app.
+ * icon. Configure app restrictions for the app.
  * 4. In the lock screen, switch to the user's restricted profile, launch this sample app,
- *    and see the configured app restrictions displayed.
+ * and see the configured app restrictions displayed.
  */
-public class MainActivity extends Activity {
-    private Bundle mRestrictionsBundle;
+public class MainActivity extends AppCompatActivity {
 
     // Checkbox to indicate whether custom or standard app restriction types are selected.
     private CheckBox mCustomConfig;
@@ -62,15 +62,14 @@ public class MainActivity extends Activity {
         // Sets up  user interface elements.
         setContentView(R.layout.main);
 
-        mCustomConfig = (CheckBox) findViewById(R.id.custom_app_limits);
-        final boolean customChecked =
-                PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
-                        CUSTOM_CONFIG_KEY, false);
+        mCustomConfig = findViewById(R.id.custom_app_limits);
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        final boolean customChecked = prefs.getBoolean(CUSTOM_CONFIG_KEY, false);
         if (customChecked) mCustomConfig.setChecked(true);
 
-        mMultiEntryValue = (TextView) findViewById(R.id.multi_entry_id);
-        mChoiceEntryValue = (TextView) findViewById(R.id.choice_entry_id);
-        mBooleanEntryValue = (TextView) findViewById(R.id.boolean_entry_id);
+        mMultiEntryValue = findViewById(R.id.multi_entry_id);
+        mChoiceEntryValue = findViewById(R.id.choice_entry_id);
+        mBooleanEntryValue = findViewById(R.id.boolean_entry_id);
     }
 
     @Override
@@ -79,51 +78,55 @@ public class MainActivity extends Activity {
 
         // If app restrictions are set for this package, when launched from a restricted profile,
         // the settings are available in the returned Bundle as key/value pairs.
-        mRestrictionsBundle =
-                ((UserManager) getSystemService(Context.USER_SERVICE))
-                        .getApplicationRestrictions(getPackageName());
-        if (mRestrictionsBundle == null) {
-            mRestrictionsBundle = new Bundle();
+        Bundle restrictionsBundle = null;
+        final UserManager userManager = (UserManager) getSystemService(Context.USER_SERVICE);
+        if (userManager != null) {
+            restrictionsBundle = userManager.getApplicationRestrictions(getPackageName());
+        }
+        if (restrictionsBundle == null) {
+            restrictionsBundle = new Bundle();
         }
 
         // Reads and displays values from a boolean type restriction entry, if available.
         // An app can utilize these settings to restrict its content under a restricted profile.
         final String booleanRestrictionValue =
-                mRestrictionsBundle.containsKey(GetRestrictionsReceiver.KEY_BOOLEAN) ?
-                        mRestrictionsBundle.getBoolean(GetRestrictionsReceiver.KEY_BOOLEAN) + "":
+                restrictionsBundle.containsKey(GetRestrictionsReceiver.KEY_BOOLEAN) ?
+                        restrictionsBundle.getBoolean(GetRestrictionsReceiver.KEY_BOOLEAN) + "" :
                         getString(R.string.na);
         mBooleanEntryValue.setText(booleanRestrictionValue);
 
         // Reads and displays values from a single choice restriction entry, if available.
         final String singleChoiceRestrictionValue =
-                mRestrictionsBundle.containsKey(GetRestrictionsReceiver.KEY_CHOICE) ?
-                        mRestrictionsBundle.getString(GetRestrictionsReceiver.KEY_CHOICE) :
+                restrictionsBundle.containsKey(GetRestrictionsReceiver.KEY_CHOICE) ?
+                        restrictionsBundle.getString(GetRestrictionsReceiver.KEY_CHOICE) :
                         getString(R.string.na);
         mChoiceEntryValue.setText(singleChoiceRestrictionValue);
 
         // Reads and displays values from a multi-select restriction entry, if available.
         final String[] multiSelectValues =
-                mRestrictionsBundle.getStringArray(GetRestrictionsReceiver.KEY_MULTI_SELECT);
+                restrictionsBundle.getStringArray(GetRestrictionsReceiver.KEY_MULTI_SELECT);
         if (multiSelectValues == null || multiSelectValues.length == 0) {
             mMultiEntryValue.setText(getString(R.string.na));
         } else {
-            String tempValue = "";
+            StringBuilder builder = new StringBuilder();
             for (String value : multiSelectValues) {
-                tempValue = tempValue + value + " ";
+                builder.append(value);
+                builder.append(" ");
             }
-            mMultiEntryValue.setText(tempValue);
+            mMultiEntryValue.setText(builder.toString());
         }
     }
 
     /**
      * Saves custom app restriction to the shared preference.
-     *
+     * <p>
      * This flag is used by {@code GetRestrictionsReceiver} to determine if a custom app
      * restriction activity should be used.
      */
     public void onCustomClicked(View view) {
-        final SharedPreferences.Editor editor =
-                PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putBoolean(CUSTOM_CONFIG_KEY, mCustomConfig.isChecked()).apply();
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.edit()
+                .putBoolean(CUSTOM_CONFIG_KEY, mCustomConfig.isChecked())
+                .apply();
     }
 }
