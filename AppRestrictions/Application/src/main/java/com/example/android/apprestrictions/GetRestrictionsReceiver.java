@@ -21,10 +21,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.RestrictionEntry;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -148,8 +150,8 @@ public class GetRestrictionsReceiver extends BroadcastReceiver {
         //
         // If your app has an existing activity for app restriction configuration, you can set it
         // up with the intent here.
-        if (PreferenceManager.getDefaultSharedPreferences(context)
-                .getBoolean(MainActivity.CUSTOM_CONFIG_KEY, false)) {
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean(MainActivity.CUSTOM_CONFIG_KEY, false)) {
             final Intent customIntent = new Intent();
             customIntent.setClass(context, CustomRestrictionsActivity.class);
             extras.putParcelable(Intent.EXTRA_RESTRICTIONS_INTENT, customIntent);

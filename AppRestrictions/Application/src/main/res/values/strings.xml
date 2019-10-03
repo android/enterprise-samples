@@ -14,6 +14,18 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">AppRestrictions</string>
+    <string name="intro_message">
+        <![CDATA[
+            This sample demonstrates the use of the App Restriction feature, which is available on
+            Android 4.3 and above tablet device with the multiuser feature.
+
+            When launched under the primary User account, you can toggle between standard app restriction
+            types and custom.  When launched under a restricted profile, this activity displays app
+            restriction settings, if available.
+        ]]>
+    </string>
+
     <string name="restrictions_activity_label">Custom app restrictions</string>
     <string name="boolean_entry_title">Test boolean type</string>
     <string name="choice_entry_title">Test choice type</string>
