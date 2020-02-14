@@ -1,4 +1,3 @@
-
 Android BasicManagedProfile Sample
 ===================================
 
@@ -25,22 +24,25 @@ package is registered as the profile owner for the current user. You
 can initiate the provisioning flow of a managed profile with Intent of
 [ACTION_PROVISION_MANAGED_PROFILE][2].
 
-You have to implement a class extending [DeviceAdminReceiver][3] to
-receive the result of the provisioning flow. Use
-[setProfileEnabled][4] to enable the newly created profile, and your
-app is now set up as a profile owner.
+In order to receive the result of provisioning flow, you have to create an
+Activity that reacts to [android.app.action.PROVISIONING_SUCCESSFUL][3] Intent
+action. Use [setProfileEnabled][4] to enable the newly created
+profile. Implement a class extending [DeviceAdminReceiver][5] and specify it as
+the parameter. Your app is now set up as a profile owner. To support API levels
+below 26, you also have to enable the profile in
+[onProfileProvisioningComplete][6].
 
 [1]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#isProfileOwnerApp(java.lang.String)
 [2]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#ACTION_PROVISION_MANAGED_PROFILE
-[3]: http://developer.android.com/reference/android/app/admin/DeviceAdminReceiver.html
+[3]: https://developer.android.com/reference/android/app/admin/DevicePolicyManager#ACTION_PROVISIONING_SUCCESSFUL
 [4]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#setProfileEnabled(android.content.ComponentName)
+[5]: http://developer.android.com/reference/android/app/admin/DeviceAdminReceiver.html
+[6]: https://developer.android.com/reference/android/app/admin/DeviceAdminReceiver#onProfileProvisioningComplete(android.content.Context,%20android.content.Intent)
 
 Pre-requisites
 --------------
 
-- Android SDK 28
-- Android Build Tools v28.0.3
-- Android Support Repository
+- Android SDK 29
 
 Screenshots
 -------------

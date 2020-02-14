@@ -17,7 +17,6 @@
 package com.example.android.basicmanagedprofile;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -28,10 +27,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 /**
  * This {@link Fragment} handles initiation of managed profile provisioning.
  */
-public class SetupProfileFragment extends Fragment implements View.OnClickListener {
+public class SetupProfileFragment extends Fragment {
 
     private static final int REQUEST_PROVISION_MANAGED_PROFILE = 1;
 
@@ -39,28 +42,18 @@ public class SetupProfileFragment extends Fragment implements View.OnClickListen
         return new SetupProfileFragment();
     }
 
-    public SetupProfileFragment() {
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_setup_profile, container, false);
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState
+    ) {
+        return inflater.inflate(R.layout.setup_profile_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.set_up_profile).setOnClickListener(this);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.set_up_profile: {
-                provisionManagedProfile();
-                break;
-            }
-        }
+        view.findViewById(R.id.set_up_profile).setOnClickListener((v) -> provisionManagedProfile());
     }
 
     /**
@@ -76,14 +69,17 @@ public class SetupProfileFragment extends Fragment implements View.OnClickListen
 
         // Use a different intent extra below M to configure the admin component.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            //noinspection deprecation
-            intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
-                    activity.getApplicationContext().getPackageName());
+            intent.putExtra(
+                    DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
+                    activity.getApplicationContext().getPackageName()
+            );
         } else {
             final ComponentName component = new ComponentName(activity,
                     BasicDeviceAdminReceiver.class.getName());
-            intent.putExtra(DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
-                    component);
+            intent.putExtra(
+                    DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
+                    component
+            );
         }
 
         if (intent.resolveActivity(activity.getPackageManager()) != null) {
@@ -91,7 +87,7 @@ public class SetupProfileFragment extends Fragment implements View.OnClickListen
             activity.finish();
         } else {
             Toast.makeText(activity, "Device provisioning is not enabled. Stopping.",
-                           Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();
         }
     }
 

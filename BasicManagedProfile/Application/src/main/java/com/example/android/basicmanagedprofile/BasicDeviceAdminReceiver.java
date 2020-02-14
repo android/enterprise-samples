@@ -21,6 +21,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.annotation.NonNull;
+
 /**
  * Handles events related to managed profile.
  */
@@ -33,15 +35,19 @@ public class BasicDeviceAdminReceiver extends DeviceAdminReceiver {
      * Note that the managed profile is not fully visible until it is enabled.
      */
     @Override
-    public void onProfileProvisioningComplete(Context context, Intent intent) {
-        // EnableProfileActivity is launched with the newly set up profile.
-        Intent launch = new Intent(context, EnableProfileActivity.class);
-        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(launch);
+    public void onProfileProvisioningComplete(@NonNull Context context, @NonNull Intent intent) {
+        final PostProvisioningHelper helper = new PostProvisioningHelper(context);
+        if (!helper.isDone()) {
+            // EnableProfileActivity is launched with the newly set up profile.
+            Intent launch = new Intent(context, EnableProfileActivity.class);
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(launch);
+        }
     }
 
     /**
      * Generates a {@link ComponentName} that is used throughout the app.
+     *
      * @return a {@link ComponentName}
      */
     public static ComponentName getComponentName(Context context) {
