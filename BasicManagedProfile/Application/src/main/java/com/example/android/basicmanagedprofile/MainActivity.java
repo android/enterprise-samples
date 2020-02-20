@@ -16,20 +16,21 @@
 
 package com.example.android.basicmanagedprofile;
 
-import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.os.Bundle;
 
-public class MainActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_real);
+        setContentView(R.layout.main_activity);
         if (savedInstanceState == null) {
-            DevicePolicyManager manager = (DevicePolicyManager)
-                    getSystemService(Context.DEVICE_POLICY_SERVICE);
+            DevicePolicyManager manager =
+                    (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             if (manager.isProfileOwnerApp(getApplicationContext().getPackageName())) {
                 // If the managed profile is already set up, we show the main screen.
                 showMainFragment();
@@ -41,13 +42,13 @@ public class MainActivity extends Activity {
     }
 
     private void showSetupProfile() {
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, SetupProfileFragment.newInstance())
                 .commit();
     }
 
     private void showMainFragment() {
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, BasicManagedProfileFragment.newInstance())
                 .commit();
     }

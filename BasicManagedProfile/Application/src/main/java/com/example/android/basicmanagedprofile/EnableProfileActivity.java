@@ -16,52 +16,33 @@
 
 package com.example.android.basicmanagedprofile;
 
-import android.app.Activity;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * This activity is started after the provisioning is complete in {@link BasicDeviceAdminReceiver}.
  */
-public class EnableProfileActivity extends Activity implements View.OnClickListener {
+public class EnableProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (null == savedInstanceState) {
+
+        final PostProvisioningHelper helper = new PostProvisioningHelper(this);
+        if (!helper.isDone()) {
             // Important: After the profile has been created, the MDM must enable it for corporate
             // apps to become visible in the launcher.
-            enableProfile();
+            helper.completeProvisioning();
         }
+
         // This is just a friendly shortcut to the main screen.
-        setContentView(R.layout.activity_setup);
-        findViewById(R.id.icon).setOnClickListener(this);
+        setContentView(R.layout.enable_profile_activity);
+        findViewById(R.id.icon).setOnClickListener((v) -> {
+            // Opens up the main screen
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        });
     }
-
-    private void enableProfile() {
-        DevicePolicyManager manager =
-            (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        ComponentName componentName = BasicDeviceAdminReceiver.getComponentName(this);
-        // This is the name for the newly created managed profile.
-        manager.setProfileName(componentName, getString(R.string.profile_name));
-        // We enable the profile here.
-        manager.setProfileEnabled(componentName);
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.icon: {
-                // Opens up the main screen
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-                break;
-            }
-        }
-    }
-
 }

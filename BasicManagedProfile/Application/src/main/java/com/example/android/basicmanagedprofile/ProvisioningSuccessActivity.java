@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Google LLC
+ * Copyright (C) 2020 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
+package com.example.android.basicmanagedprofile;
 
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-    }
-}
+import android.os.Bundle;
 
-allprojects {
-    repositories {
-        google()
-        jcenter()
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class ProvisioningSuccessActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        final PostProvisioningHelper helper = new PostProvisioningHelper(this);
+        helper.completeProvisioning();
+        finish();
     }
 }
