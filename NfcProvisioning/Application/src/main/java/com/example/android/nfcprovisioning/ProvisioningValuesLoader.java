@@ -16,6 +16,7 @@
 
 package com.example.android.nfcprovisioning;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.Context;
@@ -23,15 +24,22 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
+import android.text.TextUtils;
+import android.util.MalformedJsonException;
+
 import androidx.loader.content.AsyncTaskLoader;
 
 import com.example.android.common.logger.Log;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,7 +56,9 @@ import java.util.TimeZone;
 public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String>> {
 
     private static final String FILENAME = "nfcprovisioning.txt";
+    private static final String JSON_FILENAME = "nfcprovisioning.json";
     private static final String TAG = "LoadProvisioningValuesTask";
+    protected static final String LOADED_FILENAME = " FileName";
 
     private Map<String, String> mValues;
 
@@ -59,8 +69,10 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
     @Override
     public Map<String, String> loadInBackground() {
         HashMap<String, String> values = new HashMap<>();
-        loadFromDisk(values);
-        gatherAdminExtras(values);
+        loadJsonFromDisk(values);
+        if (values.isEmpty()) {
+            loadFromDisk(values);
+        }
         loadSystemValues(values);
         return values;
     }
@@ -105,6 +117,7 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
         Log.d(TAG, "Loading the config file...");
         try {
             loadFromFile(values, file);
+            values.put(LOADED_FILENAME, file.getPath());
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Error loading data from " + file, e);
@@ -125,12 +138,71 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
                 String key = line.substring(0, position);
                 String value = line.substring(position + 1);
                 values.put(key, value);
-                Log.d(TAG, key + "=" + value);
+                Log.w(TAG, key + "=" + value);
+            }
+        }
+        gatherAdminExtras(values);
+    }
+
+    private void loadJsonFromDisk(HashMap<String, String> values) {
+        File directory = Environment.getExternalStorageDirectory();
+        File file = new File(directory, JSON_FILENAME);
+        if (!file.exists()) {
+            return;
+        }
+        try {
+            loadFromJson(values, file);
+            values.put(LOADED_FILENAME, file.getPath());
+        } catch (JsonSyntaxException e) {
+            Log.d(TAG, "Syntax error loading JSON from " + file + " " + e);
+        } catch (MalformedJsonException e) {
+            Log.d(TAG, "Content error loading JSON from " + file + " " + e);
+        } catch (IOException e) {
+            Log.d(TAG, "I/O error loading JSON from " + file + " " + e);
+        }
+    }
+
+    private void loadFromJson(HashMap<String, String> values, File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            Gson gson = new Gson();
+            Type myT = new TypeToken<Map<String,Object>>(){}.getType();
+            Map<String, Object> map = gson.fromJson(reader, myT);
+            for (String key : map.keySet()) {
+                Object val = map.get(key);
+                assert val != null;
+                if (val instanceof String) {
+                    values.put(key, val.toString());
+                }
+                else if (val instanceof Map) {
+                    Properties props = new Properties();
+                    @SuppressWarnings (value="unchecked")
+                    Map<String, Object> bundle = (Map<String, Object>) val;
+                    for (Map.Entry<String, Object> e1 : bundle.entrySet()) {
+                        if (!TextUtils.isEmpty(e1.getValue().toString())) {
+                            props.put(e1.getKey(), e1.getValue().toString());
+                        }
+                    }
+                    StringWriter sw = new StringWriter();
+                    try{
+                        props.store(sw, "admin extras bundle");
+                        values.put(key, sw.toString());
+                    } catch (IOException e) {
+                        Log.d(TAG, "Unable to build sub-bundle for " + key);
+                    }
+                }
+                else {
+                    // Fail soft...
+                    values.put(key, val.toString());
+                }
             }
         }
     }
 
+    @SuppressLint("InlinedApi")
     private void gatherAdminExtras(HashMap<String, String> values) {
+        // Scans for "orphaned" items, and collects them into the "extras bundle",
+        // which it then serializes and puts back as a single item.
+        // ("orphaned" == doesn't begin with "android.app.extra")
         Properties props = new Properties();
         Set<String> keys = new HashSet<>(values.keySet());
         for (String key : keys) {
@@ -152,9 +224,9 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
         }
     }
 
+    @SuppressLint("InlinedApi") // See comment in NfcProvisioningFragment
     private void loadSystemValues(HashMap<String, String> values) {
         Context context = getContext();
-        //noinspection deprecation
         putIfMissing(values, DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
                 "com.example.android.deviceowner");
         if (Build.VERSION.SDK_INT >= 23) {
@@ -166,7 +238,7 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
         putIfMissing(values, DevicePolicyManager.EXTRA_PROVISIONING_TIME_ZONE,
                 TimeZone.getDefault().getID());
         if (!values.containsKey(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SSID)) {
-            WifiManager wifiManager = (WifiManager) context
+            WifiManager wifiManager = (WifiManager) context.getApplicationContext()
                     .getSystemService(Activity.WIFI_SERVICE);
             WifiInfo info = wifiManager.getConnectionInfo();
             if (info.getNetworkId() != -1) { // Connected to network

@@ -1,0 +1,27 @@
+/*
+Sample JSON configuration file for NfcProvisioning
+Place your version of this file in the SD card:
+   $ adb push nfcprovisioning.json /sdcard/
+
+See GitHub donnKey/KioskInstaller for more on the sample values used here.
+
+Note: This comment is not legal JSON, although the GSON parser used here will accept it.
+Remove it if using for QR codes.
+*/
+
+{
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_PACKAGE_DOWNLOAD_LOCATION":"http://yourLocalHost:4000/JekyllStuffDirectory/kioskInstaller-release.apk",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_SIGNATURE_CHECKSUM":"8DbqqMigRdzjCmoM0z_L29JN28HkLQ718VWz-1V599Y",
+  "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME":"com.donnKey.kioskInstaller/com.donnKey.kioskInstaller.KioskInstallerDeviceAdmin",
+  "android.app.extra.PROVISIONING_WIFI_HIDDEN":true,
+  "android.app.extra.PROVISIONING_WIFI_SSID":"mySSID",
+  "android.app.extra.PROVISIONING_WIFI_SECURITY_TYPE":"WPA",
+  "android.app.extra.PROVISIONING_WIFI_PASSWORD":"myPassword",
+  "android.app.extra.PROVISIONING_LEAVE_ALL_SYSTEM_APPS_ENABLED":true,
+  "android.app.extra.PROVISIONING_SKIP_ENCRYPTION":true,
+  "android.app.extra.PROVISIONING_ADMIN_EXTRAS_BUNDLE":
+  {
+    "packageName":"com.yourOrganization.yourKioskApp",
+    "installLocation":"https://play.google.com/store/apps/details?id=com.yourOrganization.yourKioskApp"
+  }
+}
