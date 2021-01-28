@@ -24,13 +24,22 @@
         android:orientation="vertical"
         android:padding="@dimen/margin_small">
 
+        <TextView
+            android:id="@+id/noFile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/no_permission"
+            android:textColor="#FF0000" />
+
         <EditText
             android:id="@+id/package_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_package_name"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/class_name"
@@ -38,7 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_class_name"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/locale"
@@ -46,7 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_locale"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/timezone"
@@ -54,7 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_timezone"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/wifi_ssid"
@@ -62,7 +74,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_wifi_ssid"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/wifi_security_type"
@@ -70,7 +83,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_wifi_security_type"
-            android:inputType="textNoSuggestions" />
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
+
+        <EditText
+            android:id="@+id/wifi_hidden"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:hint="@string/hint_wifi_hidden"
+            android:inputType="textNoSuggestions"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/wifi_password"
@@ -78,8 +101,17 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:hint="@string/hint_wifi_password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:importantForAutofill="no" />
 
+        <EditText
+            android:id="@+id/extras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:hint="@string/hint_extras"
+            android:inputType="textMultiLine"
+            android:importantForAutofill="no" />
     </LinearLayout>
 
 </ScrollView>

@@ -16,16 +16,24 @@
 
 package com.example.android.nfcprovisioning;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -34,6 +42,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -54,6 +63,7 @@ public class NfcProvisioningFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<Map<String, String>> {
 
     private static final int LOADER_PROVISIONING_VALUES = 1;
+    private boolean doLoad = false;
 
     // View references
     private EditText mEditPackageName;
@@ -62,10 +72,23 @@ public class NfcProvisioningFragment extends Fragment implements
     private EditText mEditTimezone;
     private EditText mEditWifiSsid;
     private EditText mEditWifiSecurityType;
+    private EditText mEditWifiHidden;
     private EditText mEditWifiPassword;
+    private EditText mEditExtras;
+    private TextView mNoFile;
 
     // Values to be set via NFC bump
     private Map<String, String> mProvisioningValues;
+
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    doLoad = true;
+                    LoaderManager.getInstance(this).initLoader(LOADER_PROVISIONING_VALUES, null, this);
+                } else {
+                    doLoad = false;
+                }
+            });
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -76,13 +99,16 @@ public class NfcProvisioningFragment extends Fragment implements
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         // Retrieve view references
-        mEditPackageName = (EditText) view.findViewById(R.id.package_name);
-        mEditClassName = (EditText) view.findViewById(R.id.class_name);
-        mEditLocale = (EditText) view.findViewById(R.id.locale);
-        mEditTimezone = (EditText) view.findViewById(R.id.timezone);
-        mEditWifiSsid = (EditText) view.findViewById(R.id.wifi_ssid);
-        mEditWifiSecurityType = (EditText) view.findViewById(R.id.wifi_security_type);
-        mEditWifiPassword = (EditText) view.findViewById(R.id.wifi_password);
+        mEditPackageName = view.findViewById(R.id.package_name);
+        mEditClassName = view.findViewById(R.id.class_name);
+        mEditLocale = view.findViewById(R.id.locale);
+        mEditTimezone = view.findViewById(R.id.timezone);
+        mEditWifiSsid = view.findViewById(R.id.wifi_ssid);
+        mEditWifiSecurityType = view.findViewById(R.id.wifi_security_type);
+        mEditWifiHidden = view.findViewById(R.id.wifi_hidden);
+        mEditWifiPassword = view.findViewById(R.id.wifi_password);
+        mEditExtras = view.findViewById(R.id.extras);
+        mNoFile = view.findViewById(R.id.noFile);
         // Bind event handlers
         mEditPackageName.addTextChangedListener(new TextWatcherWrapper(R.id.package_name, this));
         mEditClassName.addTextChangedListener(new TextWatcherWrapper(R.id.class_name, this));
@@ -91,7 +117,9 @@ public class NfcProvisioningFragment extends Fragment implements
         mEditWifiSsid.addTextChangedListener(new TextWatcherWrapper(R.id.wifi_ssid, this));
         mEditWifiSecurityType.addTextChangedListener(
                 new TextWatcherWrapper(R.id.wifi_security_type, this));
+        mEditWifiHidden.addTextChangedListener(new TextWatcherWrapper(R.id.wifi_hidden, this));
         mEditWifiPassword.addTextChangedListener(new TextWatcherWrapper(R.id.wifi_password, this));
+        mEditExtras.addTextChangedListener(new TextWatcherWrapper(R.id.extras, this));
         // Prior to API 23, the class name is not needed
         mEditClassName.setVisibility(Build.VERSION.SDK_INT >= 23 ? View.VISIBLE : View.GONE);
     }
@@ -104,9 +132,24 @@ public class NfcProvisioningFragment extends Fragment implements
         if (adapter != null) {
             adapter.setNdefPushMessageCallback(this, activity);
         }
-        getLoaderManager().initLoader(LOADER_PROVISIONING_VALUES, null, this);
+
+        if (ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED) {
+            doLoad = true;
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        mNoFile.setVisibility(!doLoad ? View.VISIBLE : View.GONE);
+        if (doLoad) {
+            LoaderManager.getInstance(this).initLoader(LOADER_PROVISIONING_VALUES, null, this);
+        }
     }
 
+    @SuppressLint("InlinedApi") // This app will RUN down level to at least API 19,
+    // but the device being initialized (the receiver) must be API21 or higher.
+    // Allow ancient devices as senders. (The fields are just strings.)
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         if (mProvisioningValues == null) {
@@ -124,14 +167,14 @@ public class NfcProvisioningFragment extends Fragment implements
                     if (!value.startsWith("\"") || !value.endsWith("\"")) {
                         value = "\"" + value + "\"";
                     }
-                } else //noinspection deprecation
-                    if (e.getKey().equals(
-                            DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME)
-                            && Build.VERSION.SDK_INT >= 23) {
-                        continue;
-                    } else {
-                        value = e.getValue();
-                    }
+                }
+                else if (e.getKey().equals(
+                        DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME)
+                        && Build.VERSION.SDK_INT >= 23) {
+                    continue;
+                } else {
+                    value = e.getValue();
+                }
                 properties.put(e.getKey(), value);
             }
         }
@@ -143,6 +186,7 @@ public class NfcProvisioningFragment extends Fragment implements
         }
         try {
             properties.store(stream, getString(R.string.nfc_comment));
+            @SuppressLint("InlinedApi") // see comment above
             NdefRecord record = NdefRecord.createMime(
                     DevicePolicyManager.MIME_TYPE_PROVISIONING_NFC, stream.toByteArray());
             return new NdefMessage(new NdefRecord[]{record});
@@ -152,67 +196,80 @@ public class NfcProvisioningFragment extends Fragment implements
         return null;
     }
 
+    @SuppressLint("InlinedApi") // see comment above
     @Override
     public void onTextChanged(int id, String s) {
         if (mProvisioningValues == null) {
             return;
         }
-        switch (id) {
-            case R.id.package_name:
-                //noinspection deprecation
-                mProvisioningValues.put(
-                        DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME, s);
-                break;
-            case R.id.class_name:
-                if (Build.VERSION.SDK_INT >= 23) {
-                    if (TextUtils.isEmpty(s)) {
-                        mProvisioningValues.remove(
-                                DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME);
-                    } else {
-                        // On API 23 and above, we can use
-                        // EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME to specify the receiver
-                        // in the device owner app. If the provisioning values contain this key,
-                        // EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME is not read.
-                        String packageName = mEditPackageName.getText().toString();
-                        ComponentName name = new ComponentName(packageName, s);
-                        mProvisioningValues.put(
-                                DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
-                                name.flattenToShortString());
-                    }
+        // Don't use switch{...} here: resource id's are not final (someday)
+        if (id == R.id.package_name) {
+            mProvisioningValues.put(
+                    DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME, s);
+        }
+        else if (id == R.id.class_name) {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (TextUtils.isEmpty(s)) {
+                    mProvisioningValues.remove(
+                            DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME);
+                } else {
+                    // On API 23 and above, we can use
+                    // EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME to specify the receiver
+                    // in the device owner app. If the provisioning values contain this key,
+                    // EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME is not read.
+                    String packageName = mEditPackageName.getText().toString();
+                    ComponentName name = new ComponentName(packageName, s);
+                    mProvisioningValues.put(
+                            DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME,
+                            name.flattenToShortString());
                 }
-                break;
-            case R.id.locale:
-                mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_LOCALE, s);
-                break;
-            case R.id.timezone:
-                mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_TIME_ZONE, s);
-                break;
-            case R.id.wifi_ssid:
-                mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SSID, s);
-                break;
-            case R.id.wifi_security_type:
-                mProvisioningValues.put(
-                        DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SECURITY_TYPE, s);
-                break;
-            case R.id.wifi_password:
-                mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_PASSWORD, s);
-                break;
+            }
+        }
+        else if (id == R.id.locale) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_LOCALE, s);
+        }
+        else if (id == R.id.timezone) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_TIME_ZONE, s);
+        }
+        else if (id == R.id.wifi_ssid) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SSID, s);
+        }
+        else if (id == R.id.wifi_hidden) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_HIDDEN, s);
+        }
+        else if (id == R.id.wifi_security_type) {
+            mProvisioningValues.put(
+                    DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SECURITY_TYPE, s);
+        }
+        else if (id == R.id.wifi_password) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_PASSWORD, s);
+        }
+        else if (id == R.id.extras) {
+            mProvisioningValues.put(DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE, s);
         }
     }
 
+    @NonNull
     @Override
     public Loader<Map<String, String>> onCreateLoader(int id, Bundle args) {
-        if (id == LOADER_PROVISIONING_VALUES) {
-            return new ProvisioningValuesLoader(getActivity());
+        if (BuildConfig.DEBUG && !(id == LOADER_PROVISIONING_VALUES)) {
+            throw new AssertionError("Unexpected Loader id");
         }
-        return null;
+        return new ProvisioningValuesLoader(getActivity());
     }
 
+    @SuppressLint("InlinedApi") // see comment above
     @Override
     public void onLoadFinished(Loader<Map<String, String>> loader, Map<String, String> values) {
         if (loader.getId() == LOADER_PROVISIONING_VALUES) {
+            if (values.get(ProvisioningValuesLoader.LOADED_FILENAME) == null) {
+                mNoFile.setVisibility(View.VISIBLE);
+                mNoFile.setText(R.string.file_not_read);
+            }
+            else {
+                mNoFile.setVisibility(View.GONE);
+            }
             mProvisioningValues = values;
-            //noinspection deprecation
             mEditPackageName.setText(values.get(
                     DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME));
             if (Build.VERSION.SDK_INT >= 23) {
@@ -225,13 +282,17 @@ public class NfcProvisioningFragment extends Fragment implements
             mEditWifiSsid.setText(values.get(DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SSID));
             mEditWifiSecurityType.setText(values.get(
                     DevicePolicyManager.EXTRA_PROVISIONING_WIFI_SECURITY_TYPE));
+            mEditWifiHidden.setText(values.get(
+                    DevicePolicyManager.EXTRA_PROVISIONING_WIFI_HIDDEN));
             mEditWifiPassword.setText(values.get(
                     DevicePolicyManager.EXTRA_PROVISIONING_WIFI_PASSWORD));
+            mEditExtras.setText(values.get(
+                    DevicePolicyManager.EXTRA_PROVISIONING_ADMIN_EXTRAS_BUNDLE));
         }
     }
 
     @Override
-    public void onLoaderReset(Loader<Map<String, String>> loader) {
+    public void onLoaderReset(@NonNull Loader<Map<String, String>> loader) {
         // Do nothing
     }
 

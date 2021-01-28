@@ -20,8 +20,9 @@ limitations under the License.
     <string name="intro_message">
         <![CDATA[
 This sample demonstrates how to provision other devices with a specified device owner using NFC.
-Install the DeviceOwner sample to an unprovisioned device. Fill in the values below, and bump the
-two devices, and tap this side to initiate the provisioning process.
+It will install a DeviceOwner sample to an unprovisioned device. The values below may be read
+from a file, or fill in the values below, bump the two devices,
+and tap this device to initiate the provisioning process.
         ]]>
     </string>
     <string name="nfc_comment">NFC provisioning sample</string>
@@ -33,5 +34,9 @@ two devices, and tap this side to initiate the provisioning process.
     <string name="hint_wifi_ssid">WiFi SSID</string>
     <string name="hint_wifi_security_type">WiFi security type</string>
     <string name="hint_wifi_password">WiFi password</string>
+    <string name="hint_wifi_hidden">Wifi hidden</string>
+    <string name="hint_extras">Extras</string>
+    <string name="no_permission">Permission not granted to read files</string>
+    <string name="file_not_read">Values not read</string>
 
 </resources>
