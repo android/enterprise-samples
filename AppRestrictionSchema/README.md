@@ -16,7 +16,7 @@ enforce specific policies on a managed device. The system provides policies
 that control settings such as password complexity, screen lock, or camera
 availability. Developers can also augment this list with custom policies
 that control specific features within their applications. For example,
-a web browser could provide access to a whitelist of allowed domains.
+a web browser could provide access to a list of allowed domains.
 
 The list of policies exposed by an app must be specified using a file
 inside of the `res/xml` directory, using the `<restriction>` tag:
