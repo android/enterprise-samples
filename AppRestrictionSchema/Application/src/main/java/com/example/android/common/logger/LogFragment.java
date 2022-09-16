@@ -13,25 +13,12 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-/*
- * Copyright 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 
 package com.example.android.common.logger;
 
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.text.Editable;
@@ -53,6 +40,7 @@ public class LogFragment extends Fragment {
 
     public LogFragment() {}
 
+    @SuppressWarnings("deprecation")
     public View inflateViews() {
         mScrollView = new ScrollView(getActivity());
         ViewGroup.LayoutParams scrollParams = new ViewGroup.LayoutParams(
@@ -76,7 +64,11 @@ public class LogFragment extends Fragment {
         mLogView.setCompoundDrawablePadding(paddingPixels);
 
         mLogView.setGravity(Gravity.BOTTOM);
-        mLogView.setTextAppearance(getActivity(), android.R.style.TextAppearance_Holo_Medium);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            mLogView.setTextAppearance(android.R.style.TextAppearance_Holo_Medium);
+        } else {
+            mLogView.setTextAppearance(getActivity(), android.R.style.TextAppearance_Holo_Medium);
+        }
 
         mScrollView.addView(mLogView);
         return mScrollView;
