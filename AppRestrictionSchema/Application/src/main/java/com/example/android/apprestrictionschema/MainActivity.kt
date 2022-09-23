@@ -36,7 +36,7 @@ import com.example.android.common.logger.MessageOnlyLogFilter
  */
 class MainActivity : SampleActivityBase() {
     // Whether the Log Fragment is currently shown
-    private var mLogShown = false
+    private var logShown = false
 
     private lateinit var binding: ActivityMainBinding
 
@@ -60,26 +60,25 @@ class MainActivity : SampleActivityBase() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val logToggle = menu.findItem(R.id.menu_toggle_log)
         logToggle.isVisible = binding.sampleOutput is ViewAnimator
-        logToggle.setTitle(if (mLogShown) R.string.sample_hide_log else R.string.sample_show_log)
+        logToggle.setTitle(if (logShown) R.string.sample_hide_log else R.string.sample_show_log)
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
             R.id.menu_toggle_log -> {
-                mLogShown = !mLogShown
+                logShown = !logShown
                 val output = binding.sampleOutput as ViewAnimator
-                if (mLogShown) {
-                    output.displayedChild = 1
+                output.displayedChild = if (logShown) {
+                    1
                 } else {
-                    output.displayedChild = 0
+                    0
                 }
-                supportInvalidateOptionsMenu()
-                return true
+                invalidateOptionsMenu()
+                true
             }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
-    }
 
     /**
      * Create a chain of targets that will receive log data
@@ -97,8 +96,10 @@ class MainActivity : SampleActivityBase() {
         // On screen logging via a fragment with a TextView.
         val logFragment = supportFragmentManager
             .findFragmentById(R.id.log_fragment) as LogFragment?
-        msgFilter.next = logFragment!!.logView
-        Log.i(TAG, "Ready")
+        logFragment?.let {
+            msgFilter.next = logFragment.logView
+            Log.i(TAG, "Ready")
+        }
     }
 
     companion object {

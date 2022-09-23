@@ -39,10 +39,10 @@ import java.lang.StringBuilder
  */
 class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     // Message to show when the button is clicked (String restriction)
-    private var mMessage: String? = null
+    private var message: String? = null
 
     // Observes restriction changes
-    private var mBroadcastReceiver: BroadcastReceiver? = null
+    private var broadcastReceiver: BroadcastReceiver? = null
 
     private var _binding: FragmentAppRestrictionSchemaBinding? = null
 
@@ -74,22 +74,22 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
 
     override fun onStart() {
         super.onStart()
-        mBroadcastReceiver = object : BroadcastReceiver() {
+        broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 resolveRestrictions()
             }
         }
         requireActivity().registerReceiver(
-            mBroadcastReceiver,
+            broadcastReceiver,
             IntentFilter(Intent.ACTION_APPLICATION_RESTRICTIONS_CHANGED)
         )
     }
 
     override fun onStop() {
         super.onStop()
-        if (mBroadcastReceiver != null) {
-            requireActivity().unregisterReceiver(mBroadcastReceiver)
-            mBroadcastReceiver = null
+        if (broadcastReceiver != null) {
+            requireActivity().unregisterReceiver(broadcastReceiver)
+            broadcastReceiver = null
         }
     }
 
@@ -108,24 +108,31 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
         for (entry in entries) {
             val key = entry.key
             Log.d(TAG, "key: $key")
-            if (key == KEY_CAN_SAY_HELLO) {
-                updateCanSayHello(entry, restrictions)
-            } else if (key == KEY_MESSAGE) {
-                updateMessage(entry, restrictions)
-            } else if (key == KEY_NUMBER) {
-                updateNumber(entry, restrictions)
-            } else if (key == KEY_RANK) {
-                updateRank(entry, restrictions)
-            } else if (key == KEY_APPROVALS) {
-                updateApprovals(entry, restrictions)
-            } else if (key == KEY_ITEMS) {
-                updateItems(restrictions)
+            when (key) {
+                KEY_CAN_SAY_HELLO -> {
+                    updateCanSayHello(entry, restrictions)
+                }
+                KEY_MESSAGE -> {
+                    updateMessage(entry, restrictions)
+                }
+                KEY_NUMBER -> {
+                    updateNumber(entry, restrictions)
+                }
+                KEY_RANK -> {
+                    updateRank(entry, restrictions)
+                }
+                KEY_APPROVALS -> {
+                    updateApprovals(entry, restrictions)
+                }
+                KEY_ITEMS -> {
+                    updateItems(restrictions)
+                }
             }
         }
     }
 
     private fun updateCanSayHello(entry: RestrictionEntry, restrictions: Bundle?) {
-        val canSayHello: Boolean = if (restrictions == null || !restrictions.containsKey(KEY_CAN_SAY_HELLO)) {
+        val canSayHello = if (restrictions == null || !restrictions.containsKey(KEY_CAN_SAY_HELLO)) {
             entry.selectedState
         } else {
             restrictions.getBoolean(KEY_CAN_SAY_HELLO)
@@ -141,7 +148,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateMessage(entry: RestrictionEntry, restrictions: Bundle?) {
-        mMessage =
+        message =
             if (restrictions == null || !restrictions.containsKey(KEY_MESSAGE)) {
                 entry.selectedString
             } else {
@@ -150,7 +157,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateNumber(entry: RestrictionEntry, restrictions: Bundle?) {
-        val number: Int = if (restrictions == null || !restrictions.containsKey(KEY_NUMBER)) {
+        val number = if (restrictions == null || !restrictions.containsKey(KEY_NUMBER)) {
             entry.intValue
         } else {
             restrictions.getInt(KEY_NUMBER)
@@ -159,7 +166,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateRank(entry: RestrictionEntry, restrictions: Bundle?) {
-        val rank: String? = if (restrictions == null || !restrictions.containsKey(KEY_RANK)) {
+        val rank = if (restrictions == null || !restrictions.containsKey(KEY_RANK)) {
             entry.selectedString
         } else {
             restrictions.getString(KEY_RANK)
@@ -168,7 +175,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateApprovals(entry: RestrictionEntry, restrictions: Bundle?) {
-        val approvals: Array<String>? = if (restrictions == null || !restrictions.containsKey(KEY_APPROVALS)) {
+        val approvals = if (restrictions == null || !restrictions.containsKey(KEY_APPROVALS)) {
             entry.allSelectedStrings
         } else {
             restrictions.getStringArray(KEY_APPROVALS)
@@ -221,7 +228,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
             R.id.say_hello -> {
                 Toast.makeText(
                     activity,
-                    getString(R.string.message, mMessage),
+                    getString(R.string.message, message),
                     Toast.LENGTH_SHORT
                 ).show()
             }
