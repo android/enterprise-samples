@@ -53,4 +53,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    implementation "androidx.enterprise:enterprise-feedback:$enterprise_version"
+    // For testing enterprise feedback in isolation
+    implementation "androidx.enterprise:enterprise-feedback-testing:$enterprise_version"
 }
