@@ -133,14 +133,13 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
     }
 
     private fun updateCanSayHello(entry: RestrictionEntry, restrictions: Bundle?) {
-        val canSayHello = if (restrictions == null || !restrictions.containsKey(KEY_CAN_SAY_HELLO)) {
-            entry.selectedState
-        } else {
-            restrictions.getBoolean(KEY_CAN_SAY_HELLO)
-        }
-        activity?.let {
-            enterpriseFeedback(it.application, KEY_CAN_SAY_HELLO, "Value is $canSayHello", "$canSayHello")
-        }
+        val canSayHello =
+            if (restrictions == null || !restrictions.containsKey(KEY_CAN_SAY_HELLO)) {
+                entry.selectedState
+            } else {
+                restrictions.getBoolean(KEY_CAN_SAY_HELLO)
+            }
+        activity?.enterpriseFeedback(KEY_CAN_SAY_HELLO, "Value is $canSayHello", "$canSayHello")
         binding.sayHello.setText(
             if (canSayHello) {
                 R.string.explanation_can_say_hello_true
@@ -158,9 +157,7 @@ class AppRestrictionSchemaFragment : Fragment(), View.OnClickListener {
             } else {
                 restrictions.getString(KEY_MESSAGE)
             }
-        activity?.let {
-            enterpriseFeedback(it.application, KEY_MESSAGE, "Value is $message", "$message")
-        }
+        activity?.enterpriseFeedback(KEY_MESSAGE, "Value is $message", "$message")
     }
 
     private fun updateNumber(entry: RestrictionEntry, restrictions: Bundle?) {
