@@ -29,14 +29,13 @@ import androidx.enterprise.feedback.KeyedAppStatesReporter
 /**
  * Sends feedback to device management apps.
  */
-fun enterpriseFeedback(
-    context: Context,
+fun Context.enterpriseFeedback(
     key: String,
     message: String,
     data: String,
     severity: Int = KeyedAppState.SEVERITY_ERROR
 ) {
-    val keyedAppStatesReporter = KeyedAppStatesReporter.create(context)
+    val keyedAppStatesReporter = KeyedAppStatesReporter.create(this)
     val keyedAppStateMessage = KeyedAppState.builder()
         .setSeverity(severity)
         .setKey(key)
