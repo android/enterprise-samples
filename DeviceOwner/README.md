@@ -30,9 +30,17 @@ As a device owner, you can also use the features available for managed profile o
 Pre-requisites
 --------------
 
-- Android SDK 28
-- Android Build Tools v28.0.3
-- Android Support Repository
+- Android SDK 33
+- Android Studio Dolphin | 2021.3.1 Patch 1
+
+Testing
+-------
+
+Once the application is installed on a device with a single user, you can use `adb` to set the application as the device owner with the command:
+
+```sh
+adb shell dpm set-device-owner com.example.android.deviceowner/.DeviceOwnerReceiver
+```
 
 Screenshots
 -------------
@@ -48,11 +56,10 @@ This sample uses the Gradle build system. To build this project, use the
 Support
 -------
 
-- Google+ Community: https://plus.google.com/communities/105153134372062985968
 - Stack Overflow: http://stackoverflow.com/questions/tagged/android
 
 If you've found an error in this sample, please file an issue:
-https://github.com/android/enterprise
+https://github.com/android/enterprise-samples/issues
 
 Patches are encouraged, and may be submitted by forking this project and
 submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
