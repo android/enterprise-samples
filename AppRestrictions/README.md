@@ -27,9 +27,8 @@ profile through the [UserManager][2].
 Pre-requisites
 --------------
 
-- Android SDK 28
-- Android Build Tools v28.0.3
-- Android Support Repository
+- Android SDK 33
+- Android Studio Dolphin | 2021.3.1 Patch 1
 
 Screenshots
 -------------
@@ -48,7 +47,7 @@ Support
 - Stack Overflow: http://stackoverflow.com/questions/tagged/android
 
 If you've found an error in this sample, please file an issue:
-https://github.com/android/enterprise
+https://github.com/android/enterprise-samples/issues
 
 Patches are encouraged, and may be submitted by forking this project and
 submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
