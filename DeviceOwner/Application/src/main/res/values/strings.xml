@@ -26,8 +26,9 @@ enforce use of a specific launcher.
         ]]>
     </string>
     <string name="set_up_instruction">
-        The app is not set up as the device owner of this device. Use NfcProvisioning sample to set
-        up this app as the device owner of this device (This requires factory resetting the device).
+        The app is not set up as the device owner of this device. Use adb as described in the
+        README to set up this app as the device owner of this device (This may requires factory
+        resetting the device).
     </string>
 
     <string name="profile_name">Sample Device Owner</string>

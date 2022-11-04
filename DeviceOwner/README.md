@@ -9,23 +9,18 @@ preferred intent handler.
 Introduction
 ------------
 
-In order to set global settings, use [DevicePolicyManager#setGlobalSetting][1] and specify one of
-the [Settings.Global][2] keys available. Note that you need to specify its value as a String. As
-most of the keys accept boolean values, you will mostly use "1" for true and "0" for false.
+In order to set global settings, use [DevicePolicyManager#setGlobalSetting][1] and specify one of the [Settings.Global][2] keys available. Note that you need to specify its value as a String. As most of the keys accept boolean values, you will mostly use "1" for true and "0" for false.
 
-You can mandate a specific launcher by adding a persistent preferred activity for an IntentFilter
-with Intent.CATEGORY_HOME category. Call [DevicePolicyManager#addPersistentPreferredActivity][3] to
-register the activity. You can clear the registration with
-[clearPackagePersistentPreferredActivities][4].
+You can mandate a specific launcher by adding a persistent preferred activity for an IntentFilter with Intent.CATEGORY_HOME category. Call [DevicePolicyManager#addPersistentPreferredActivity][3] to register the activity. You can clear the registration with [clearPackagePersistentPreferredActivities][4].
 
 As a device owner, you can also use the features available for managed profile owner. See
 [BasicManagedProfile][5].
 
-[1]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#setGlobalSetting(android.content.ComponentName, java.lang.String, java.lang.String)
+[1]: https://developer.android.com/reference/android/app/admin/DevicePolicyManager#setGlobalSetting(android.content.ComponentName,%20java.lang.String,%20java.lang.String)
 [2]: http://developer.android.com/reference/android/provider/Settings.Global.html
-[3]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#addPersistentPreferredActivity(android.content.ComponentName, android.content.IntentFilter, android.content.ComponentName)
-[4]: http://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#clearPackagePersistentPreferredActivities(android.content.ComponentName, java.lang.String)
-[5]: https://developer.android.com/samples/BasicManagedProfile/index.html
+[3]: https://developer.android.com/reference/android/app/admin/DevicePolicyManager#addPersistentPreferredActivity(android.content.ComponentName,%20android.content.IntentFilter,%20android.content.ComponentName)
+[4]: https://developer.android.com/reference/android/app/admin/DevicePolicyManager.html#clearPackagePersistentPreferredActivities(android.content.ComponentName,%20java.lang.String)
+[5]: https://github.com/android/enterprise-samples/tree/main/BasicManagedProfile
 
 Pre-requisites
 --------------
@@ -36,10 +31,16 @@ Pre-requisites
 Testing
 -------
 
-Once the application is installed on a device with a single user, you can use `adb` to set the application as the device owner with the command:
+Once the application is installed on a device without a user, you can use `adb` to set the application as the device owner with the command:
 
-```sh
+```bash
 adb shell dpm set-device-owner com.example.android.deviceowner/.DeviceOwnerReceiver
+```
+
+To remove the current admin app at the end of the tests you can use:
+
+```bash
+adb shell dpm remove-active-admin com.example.android.deviceowner/.DeviceOwnerReceiver
 ```
 
 Screenshots
