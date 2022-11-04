@@ -22,6 +22,10 @@ import android.content.Intent;
 import android.content.RestrictionEntry;
 import android.os.Bundle;
 import android.os.UserManager;
+import android.view.View;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
@@ -95,8 +99,8 @@ public class CustomRestrictionsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         final Activity activity = getActivity();
 
         // BEGIN_INCLUDE (GET_CURRENT_RESTRICTIONS)
@@ -105,9 +109,8 @@ public class CustomRestrictionsFragment extends PreferenceFragmentCompat
                 activity.getIntent().getBundleExtra(Intent.EXTRA_RESTRICTIONS_BUNDLE);
 
         if (mRestrictionsBundle == null) {
-            mRestrictionsBundle =
-                    ((UserManager) activity.getSystemService(Context.USER_SERVICE))
-                            .getApplicationRestrictions(activity.getPackageName());
+            new Thread(() -> mRestrictionsBundle = ((UserManager) activity.getSystemService(Context.USER_SERVICE))
+                            .getApplicationRestrictions(activity.getPackageName())).start();
         }
 
         if (mRestrictionsBundle == null) {
