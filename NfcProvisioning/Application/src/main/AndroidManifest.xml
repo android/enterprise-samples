@@ -16,7 +16,6 @@
 -->
 <manifest
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.android.nfcprovisioning"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:versionCode="1"
     android:versionName="1.0">
@@ -35,7 +34,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
