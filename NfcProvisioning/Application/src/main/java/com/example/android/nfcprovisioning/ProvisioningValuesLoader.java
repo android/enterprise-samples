@@ -153,7 +153,7 @@ public class ProvisioningValuesLoader extends AsyncTaskLoader<Map<String, String
     }
 
     private void loadSystemValues(HashMap<String, String> values) {
-        Context context = getContext();
+        Context context = getContext().getApplicationContext();
         //noinspection deprecation
         putIfMissing(values, DevicePolicyManager.EXTRA_PROVISIONING_DEVICE_ADMIN_PACKAGE_NAME,
                 "com.example.android.deviceowner");

@@ -42,7 +42,8 @@ below 26, you also have to enable the profile in
 Pre-requisites
 --------------
 
-- Android SDK 29
+- Android SDK 33
+- Android Studio Dolphin | 2021.3.1 Patch 1
 
 Screenshots
 -------------

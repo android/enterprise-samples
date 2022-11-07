@@ -33,9 +33,8 @@ the NdefMessage as the message to be sent.
 Pre-requisites
 --------------
 
-- Android SDK 28
-- Android Build Tools v28.0.3
-- Android Support Repository
+- Android SDK 33
+- Android Studio Dolphin | 2021.3.1 Patch 1
 
 Screenshots
 -------------

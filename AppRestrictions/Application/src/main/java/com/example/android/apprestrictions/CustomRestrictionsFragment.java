@@ -22,6 +22,9 @@ import android.content.Intent;
 import android.content.RestrictionEntry;
 import android.os.Bundle;
 import android.os.UserManager;
+import android.view.View;
+
+import androidx.annotation.NonNull;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
@@ -95,30 +98,14 @@ public class CustomRestrictionsFragment extends PreferenceFragmentCompat
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         final Activity activity = getActivity();
 
-        // BEGIN_INCLUDE (GET_CURRENT_RESTRICTIONS)
         // Existing app restriction settings, if exist, can be retrieved from the Bundle.
-        mRestrictionsBundle =
-                activity.getIntent().getBundleExtra(Intent.EXTRA_RESTRICTIONS_BUNDLE);
-
-        if (mRestrictionsBundle == null) {
-            mRestrictionsBundle =
-                    ((UserManager) activity.getSystemService(Context.USER_SERVICE))
-                            .getApplicationRestrictions(activity.getPackageName());
-        }
-
-        if (mRestrictionsBundle == null) {
-            mRestrictionsBundle = new Bundle();
-        }
-
         mRestrictions = activity.getIntent().getParcelableArrayListExtra(
                 Intent.EXTRA_RESTRICTIONS_LIST);
-        // END_INCLUDE (GET_CURRENT_RESTRICTIONS)
 
-        // Transfers the saved values into the preference hierarchy.
         if (mRestrictions != null) {
             for (RestrictionEntry entry : mRestrictions) {
                 if (entry.getKey().equals(GetRestrictionsReceiver.KEY_BOOLEAN)) {
@@ -134,48 +121,70 @@ public class CustomRestrictionsFragment extends PreferenceFragmentCompat
                     mMultiEntry = entry;
                 }
             }
+            // Prepares result to be passed back to the Settings app when the custom restrictions
+            // activity finishes.
+            Intent intent = new Intent(getActivity().getIntent());
+            intent.putParcelableArrayListExtra(Intent.EXTRA_RESTRICTIONS_LIST,
+                    new ArrayList<>(mRestrictions));
+            getActivity().setResult(Activity.RESULT_OK, intent);
         } else {
-            mRestrictions = new ArrayList<>();
+            mRestrictionsBundle =
+                activity.getIntent().getBundleExtra(Intent.EXTRA_RESTRICTIONS_BUNDLE);
 
-            // Initializes the boolean restriction entry and updates its corresponding shared
-            // preference value.
-            mBooleanEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_BOOLEAN,
-                    mRestrictionsBundle.getBoolean(GetRestrictionsReceiver.KEY_BOOLEAN, false));
-            mBooleanEntry.setType(RestrictionEntry.TYPE_BOOLEAN);
-            mBooleanPref.setChecked(mBooleanEntry.getSelectedState());
+            new Thread(() -> {
+                if (mRestrictionsBundle == null) {
+                    mRestrictionsBundle = ((UserManager) activity.getSystemService(Context.USER_SERVICE))
+                            .getApplicationRestrictions(activity.getPackageName());
 
-            // Initializes the single choice restriction entry and updates its corresponding
-            // shared preference value.
-            mChoiceEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_CHOICE,
-                    mRestrictionsBundle.getString(GetRestrictionsReceiver.KEY_CHOICE));
-            mChoiceEntry.setType(RestrictionEntry.TYPE_CHOICE);
-            mChoicePref.setValue(mChoiceEntry.getSelectedString());
-
-            // Initializes the multi-select restriction entry and updates its corresponding
-            // shared preference value.
-            mMultiEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_MULTI_SELECT,
-                    mRestrictionsBundle.getStringArray(
-                            GetRestrictionsReceiver.KEY_MULTI_SELECT));
-            mMultiEntry.setType(RestrictionEntry.TYPE_MULTI_SELECT);
-            if (mMultiEntry.getAllSelectedStrings() != null) {
-                HashSet<String> set = new HashSet<>();
-                final String[] values = mRestrictionsBundle.getStringArray(
-                        GetRestrictionsReceiver.KEY_MULTI_SELECT);
-                if (values != null) {
-                    Collections.addAll(set, values);
+                    if (mRestrictionsBundle == null) {
+                        mRestrictionsBundle = new Bundle();
+                    }
                 }
-                mMultiPref.setValues(set);
-            }
-            mRestrictions.add(mBooleanEntry);
-            mRestrictions.add(mChoiceEntry);
-            mRestrictions.add(mMultiEntry);
+
+                // Transfers the saved values into the preference hierarchy.
+                mRestrictions = new ArrayList<>();
+
+                // Initializes the boolean restriction entry and updates its corresponding shared
+                // preference value.
+                mBooleanEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_BOOLEAN,
+                        mRestrictionsBundle.getBoolean(GetRestrictionsReceiver.KEY_BOOLEAN, false));
+                mBooleanEntry.setType(RestrictionEntry.TYPE_BOOLEAN);
+                mBooleanPref.setChecked(mBooleanEntry.getSelectedState());
+
+                // Initializes the single choice restriction entry and updates its corresponding
+                // shared preference value.
+                mChoiceEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_CHOICE,
+                        mRestrictionsBundle.getString(GetRestrictionsReceiver.KEY_CHOICE));
+                mChoiceEntry.setType(RestrictionEntry.TYPE_CHOICE);
+                mChoicePref.setValue(mChoiceEntry.getSelectedString());
+
+                // Initializes the multi-select restriction entry and updates its corresponding
+                // shared preference value.
+                mMultiEntry = new RestrictionEntry(GetRestrictionsReceiver.KEY_MULTI_SELECT,
+                        mRestrictionsBundle.getStringArray(
+                                GetRestrictionsReceiver.KEY_MULTI_SELECT));
+                mMultiEntry.setType(RestrictionEntry.TYPE_MULTI_SELECT);
+                if (mMultiEntry.getAllSelectedStrings() != null) {
+                    HashSet<String> set = new HashSet<>();
+                    final String[] values = mRestrictionsBundle.getStringArray(
+                            GetRestrictionsReceiver.KEY_MULTI_SELECT);
+                    if (values != null) {
+                        Collections.addAll(set, values);
+                    }
+                    mMultiPref.setValues(set);
+                }
+                mRestrictions.add(mBooleanEntry);
+                mRestrictions.add(mChoiceEntry);
+                mRestrictions.add(mMultiEntry);
+
+                // Prepares result to be passed back to the Settings app when the custom restrictions
+                // activity finishes.
+                Intent intent = new Intent(getActivity().getIntent());
+                intent.putParcelableArrayListExtra(Intent.EXTRA_RESTRICTIONS_LIST,
+                        new ArrayList<>(mRestrictions));
+                getActivity().setResult(Activity.RESULT_OK, intent);
+            }).start();
         }
-        // Prepares result to be passed back to the Settings app when the custom restrictions
-        // activity finishes.
-        Intent intent = new Intent(getActivity().getIntent());
-        intent.putParcelableArrayListExtra(Intent.EXTRA_RESTRICTIONS_LIST,
-                new ArrayList<>(mRestrictions));
-        getActivity().setResult(Activity.RESULT_OK, intent);
     }
 
     @Override

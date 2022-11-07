@@ -17,12 +17,11 @@ package com.example.android.common.logger;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.*;
-import android.widget.TextView;
+import android.util.AttributeSet;
 
 /** Simple TextView which is used to output log data received through the LogNode interface.
 */
-public class LogView extends TextView implements LogNode {
+public class LogView extends androidx.appcompat.widget.AppCompatTextView implements LogNode {
 
     public LogView(Context context) {
         super(context);
