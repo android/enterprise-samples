@@ -184,7 +184,7 @@ class ManagedConfigurationsFragment : Fragment(), View.OnClickListener {
         } else {
             restrictions.getStringArray(KEY_APPROVALS)
         }
-        val text: String = if (approvals == null || approvals.isEmpty()) {
+        val text: String = if (approvals.isNullOrEmpty()) {
             getString(R.string.none)
         } else {
             approvals.joinToString(", ")
@@ -199,7 +199,7 @@ class ManagedConfigurationsFragment : Fragment(), View.OnClickListener {
         val builder = StringBuilder()
         if (restrictions != null) {
             val parcelables = restrictions.getParcelableArray(KEY_ITEMS)
-            if (parcelables != null && parcelables.isNotEmpty()) {
+            if (!parcelables.isNullOrEmpty()) {
                 val items = arrayOfNulls<Bundle>(parcelables.size)
                 for (i in parcelables.indices) {
                     items[i] = parcelables[i] as Bundle
