@@ -1,3 +1,0 @@
-include ':app-starter'
-//include ':app-finished'
-rootProject.name='android-work-profile'
